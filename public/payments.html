@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment List AJLS-TEST</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.1.0/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.1.0/firebase-database.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <style media="screen">
+      body { padding-top: 100px; background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; }
+      .box { background: white; max-width: 700px; margin: 15px auto; padding: 32px 24px; border-radius: 3px; }
+      .item{ margin-bottom: 15px; display: flex; align-items: center; border-top: solid 1px grey;}
+      .item .button{ float: right;}
+      .item span {flex-grow: 1; text-align: right; padding-right: 20px;}
+      @media (max-width: 600px) {
+        body { padding: 0px; border-top: 16px solid #ffa100; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="items" class="box">
+      <a href="/">go Home</a>
+      <h2>List Payment (Paypal IPN Callbacks)</h2>
+    </div>
+
+    <script>
+      $(function(){
+        var items_list_el = $('#items'),
+            item_tpl= '<div class="item"><b>{email}</b> <span>{price} {usd}</span> <b>{name}</b>' + 
+              '</div><pre style="margin-bottom: 15px;">{raw}</pre>';
+        
+        // List all available items
+        firebase.database().ref('/paypal_logs').once('value').then(function(snapshot){
+          var items = snapshot.val();
+          for(var id in items){
+            var item = items[id].raw,
+                item_el= $(item_tpl.replace(/{name}/, item.item_name)
+                  .replace(/{price}/, item.mc_amount3 | item.mc_gross)
+                  .replace(/{usd}/, item.mc_currency)
+                  .replace(/{email}/, item.payer_email)
+                  .replace(/{raw}/, JSON.stringify( item, null, 2 ))
+                );
+            items_list_el.append( item_el );
+          }
+        });
+      })
+    </script>
+  </body>
+</html>
