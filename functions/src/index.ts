@@ -5,7 +5,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 // Configure your environment
-console.log('Config:', functions.config());
+//console.log('Config:', functions.config());
 
 export const paypal_return = functions.https.onRequest((request, response) => {
   let newData = admin.database().ref('/paypal_logs').push();
