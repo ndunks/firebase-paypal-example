@@ -15,8 +15,8 @@
     ],
     "rewrites": [
       {
-        "source": "/pay",
-        "function": "pay"
+        "source": "/paypal_return",
+        "function": "paypal_return"
       }
     ]
   }
